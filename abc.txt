@@ -1,0 +1,1932 @@
+WEEK 1: OVERVIEW OF C
+Q1. Implement the string operations strcat(), strcmp(), and strcpy() using pointers.
+Answer
+#include <stdio.h>
+
+void mystrcpy(char *d, char *s) {
+    while ((*d++ = *s++) != '\0');
+}
+
+void mystrcat(char *d, char *s) {
+    while (*d) d++;
+    while ((*d++ = *s++) != '\0');
+}
+
+int mystrcmp(char *a, char *b) {
+    while (*a && *a == *b) {
+        a++;
+        b++;
+    }
+    return *a - *b;
+}
+
+int main() {
+    char s1[100] = "Hello ";
+    char s2[] = "World";
+    char s3[100];
+
+    mystrcpy(s3, s2);
+    printf("Copied: %s\n", s3);
+
+    mystrcat(s1, s2);
+    printf("Concatenated: %s\n", s1);
+
+    printf("Comparison: %d\n",
+           mystrcmp("Apple", "Apple"));
+
+    return 0;
+}
+
+Output
+Copied: World
+Concatenated: Hello World
+Comparison: 0
+
+Q2. Define a structure for an employee with members Name, Age, and Salary. Create an array of employee records and display the employee with the highest salary.
+Answer
+#include <stdio.h>
+
+struct Employee {
+    char name[50];
+    int age;
+    float salary;
+};
+
+int main() {
+    struct Employee e[100];
+    int n, i, max = 0;
+
+    printf("Enter number of employees: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++) {
+        printf("Enter name, age and salary: ");
+        scanf("%49s %d %f",
+              e[i].name, &e[i].age, &e[i].salary);
+    }
+
+    if (n < 1 || n > 100) {
+        printf("Invalid number of employees");
+        return 0;
+    }
+
+    for (i = 1; i < n; i++)
+        if (e[i].salary > e[max].salary)
+            max = i;
+
+    printf("\nName: %s\n", e[max].name);
+    printf("Age: %d\n", e[max].age);
+    printf("Salary: %.2f\n", e[max].salary);
+
+    return 0;
+}
+
+Output
+Enter number of employees: 3
+Enter name, age and salary: Ali 20 25000
+Enter name, age and salary: Rahul 22 35000
+Enter name, age and salary: Aman 21 30000
+
+Name: Rahul
+Age: 22
+Salary: 35000.00
+
+Q3. Implement length in feet and inches using a structure. Write routines to add, multiply, and subtract lengths.
+Answer
+#include <stdio.h>
+
+struct Length {
+    int feet, inches;
+};
+
+struct Length convert(int total) {
+    struct Length l;
+
+    l.feet = total / 12;
+    l.inches = total % 12;
+
+    return l;
+}
+
+struct Length add(struct Length a, struct Length b) {
+    return convert((a.feet + b.feet) * 12
+                   + a.inches + b.inches);
+}
+
+struct Length subtract(struct Length a, struct Length b) {
+    return convert((a.feet - b.feet) * 12
+                   + a.inches - b.inches);
+}
+
+struct Length multiply(struct Length a, int n) {
+    return convert((a.feet * 12 + a.inches) * n);
+}
+
+void display(struct Length a) {
+    printf("%d feet %d inches\n", a.feet, a.inches);
+}
+
+int main() {
+    struct Length a = {5, 8}, b = {3, 9};
+
+    printf("First length: ");
+    display(a);
+
+    printf("Second length: ");
+    display(b);
+
+    printf("Addition: ");
+    display(add(a, b));
+
+    printf("Subtraction: ");
+    display(subtract(a, b));
+
+    printf("Multiplication by 2: ");
+    display(multiply(a, 2));
+
+    return 0;
+}
+
+Output
+First length: 5 feet 8 inches
+Second length: 3 feet 9 inches
+Addition: 9 feet 5 inches
+Subtraction: 1 feet 11 inches
+Multiplication by 2: 11 feet 4 inches
+
+WEEK 2: ARRAYS
+Q1. Write a program to insert a new element into an unsorted array at the kth position.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[100], n, k, value, i;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter position and value: ");
+    scanf("%d %d", &k, &value);
+
+    if (n < 0 || n >= 100 || k < 1 || k > n + 1) {
+        printf("Invalid input");
+        return 0;
+    }
+
+    for (i = n; i >= k; i--)
+        a[i] = a[i - 1];
+
+    a[k - 1] = value;
+    n++;
+
+    printf("Array after insertion: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Output
+Enter array size: 3
+Enter elements: 10 20 30
+Enter position and value: 2 15
+Array after insertion: 10 15 20 30
+
+Q2. Write a program to delete an element from a given array.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[100], n, value, i, pos = -1;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter element to delete: ");
+    scanf("%d", &value);
+
+    for (i = 0; i < n; i++) {
+        if (a[i] == value) {
+            pos = i;
+            break;
+        }
+    }
+
+    if (pos == -1) {
+        printf("Element not found");
+        return 0;
+    }
+
+    for (i = pos; i < n - 1; i++)
+        a[i] = a[i + 1];
+
+    n--;
+
+    printf("Array after deletion: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Output
+Enter array size: 4
+Enter elements: 10 20 30 40
+Enter element to delete: 20
+Array after deletion: 10 30 40
+
+Q3. Write a program to delete an element at index i from the given array.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[100], n, index, i;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter index to delete: ");
+    scanf("%d", &index);
+
+    if (index < 0 || index >= n) {
+        printf("Invalid index");
+        return 0;
+    }
+
+    for (i = index; i < n - 1; i++)
+        a[i] = a[i + 1];
+
+    n--;
+
+    printf("Array after deletion: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Output
+Enter array size: 4
+Enter elements: 10 20 30 40
+Enter index to delete: 2
+Array after deletion: 10 20 40
+
+WEEK 3: MATRICES
+Q1. Write a program to enter two matrices and add them.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[10][10], b[10][10], r, c, i, j;
+
+    printf("Enter rows and columns: ");
+    scanf("%d %d", &r, &c);
+
+    if (r < 1 || r > 10 || c < 1 || c > 10) {
+        printf("Invalid dimensions");
+        return 0;
+    }
+
+    printf("Enter first matrix:\n");
+    for (i = 0; i < r; i++)
+        for (j = 0; j < c; j++)
+            scanf("%d", &a[i][j]);
+
+    printf("Enter second matrix:\n");
+    for (i = 0; i < r; i++)
+        for (j = 0; j < c; j++)
+            scanf("%d", &b[i][j]);
+
+    printf("Sum of matrices:\n");
+    for (i = 0; i < r; i++) {
+        for (j = 0; j < c; j++)
+            printf("%d ", a[i][j] + b[i][j]);
+        printf("\n");
+    }
+
+    return 0;
+}
+
+Output
+Enter rows and columns: 2 2
+Enter first matrix:
+1 2
+3 4
+Enter second matrix:
+5 6
+7 8
+Sum of matrices:
+6 8
+10 12
+
+Q2. Write a program to enter two matrices and multiply them.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[10][10], b[10][10], c[10][10] = {0};
+    int r1, c1, r2, c2, i, j, k;
+
+    printf("Enter rows and columns of first matrix: ");
+    scanf("%d %d", &r1, &c1);
+
+    printf("Enter rows and columns of second matrix: ");
+    scanf("%d %d", &r2, &c2);
+
+    if (r1 < 1 || r1 > 10 || c1 < 1 || c1 > 10 ||
+        r2 < 1 || r2 > 10 || c2 < 1 || c2 > 10 ||
+        c1 != r2) {
+        printf("Multiplication not possible");
+        return 0;
+    }
+
+    printf("Enter first matrix:\n");
+    for (i = 0; i < r1; i++)
+        for (j = 0; j < c1; j++)
+            scanf("%d", &a[i][j]);
+
+    printf("Enter second matrix:\n");
+    for (i = 0; i < r2; i++)
+        for (j = 0; j < c2; j++)
+            scanf("%d", &b[i][j]);
+
+    for (i = 0; i < r1; i++)
+        for (j = 0; j < c2; j++)
+            for (k = 0; k < c1; k++)
+                c[i][j] += a[i][k] * b[k][j];
+
+    printf("Product of matrices:\n");
+    for (i = 0; i < r1; i++) {
+        for (j = 0; j < c2; j++)
+            printf("%d ", c[i][j]);
+        printf("\n");
+    }
+
+    return 0;
+}
+
+Output
+Enter rows and columns of first matrix: 2 2
+Enter rows and columns of second matrix: 2 2
+Enter first matrix:
+1 2
+3 4
+Enter second matrix:
+5 6
+7 8
+Product of matrices:
+19 22
+43 50
+
+Q3. Write a program to enter a matrix, check whether it is sparse, and display its triplet representation if it is sparse.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[10][10], r, c, i, j, zero = 0, count = 0;
+
+    printf("Enter rows and columns: ");
+    scanf("%d %d", &r, &c);
+
+    if (r < 1 || r > 10 || c < 1 || c > 10) {
+        printf("Invalid dimensions");
+        return 0;
+    }
+
+    printf("Enter matrix elements:\n");
+    for (i = 0; i < r; i++)
+        for (j = 0; j < c; j++) {
+            scanf("%d", &a[i][j]);
+            if (a[i][j] == 0)
+                zero++;
+        }
+
+    if (zero <= r * c / 2) {
+        printf("Matrix is not sparse");
+        return 0;
+    }
+
+    printf("Triplet representation:\n");
+    printf("Row Column Value\n");
+    printf("%d %d %d\n", r, c, r * c - zero);
+
+    for (i = 0; i < r; i++)
+        for (j = 0; j < c; j++)
+            if (a[i][j] != 0) {
+                printf("%d %d %d\n", i, j, a[i][j]);
+                count++;
+            }
+
+    return 0;
+}
+
+Output
+Enter rows and columns: 3 3
+Enter matrix elements:
+0 0 3
+0 0 0
+4 0 0
+Triplet representation:
+Row Column Value
+3 3 2
+0 2 3
+2 0 4
+
+WEEK 4: STACK & QUEUE
+Q1. Write a program to implement Stack using an array, showing overflow and underflow in push and pop operations.
+Answer
+#include <stdio.h>
+#define MAX 5
+
+int stack[MAX], top = -1;
+
+void push(int x) {
+    if (top == MAX - 1)
+        printf("Stack Overflow!\n");
+    else {
+        stack[++top] = x;
+        printf("%d pushed\n", x);
+    }
+}
+
+void pop() {
+    if (top == -1)
+        printf("Stack Underflow!\n");
+    else
+        printf("Popped: %d\n", stack[top--]);
+}
+
+void display() {
+    int i;
+    for (i = top; i >= 0; i--)
+        printf("%d ", stack[i]);
+    printf("\n");
+}
+
+int main() {
+    push(10);
+    push(20);
+    push(30);
+    display();
+    pop();
+    display();
+    return 0;
+}
+
+Output
+10 pushed
+20 pushed
+30 pushed
+30 20 10
+Popped: 30
+20 10
+
+Q2. Write a program to implement Queue using an array, showing insertion and deletion operations.
+Answer
+#include <stdio.h>
+#define MAX 5
+
+int q[MAX], front = 0, rear = -1;
+
+void insert(int x) {
+    if (rear == MAX - 1)
+        printf("Queue Overflow!\n");
+    else
+        q[++rear] = x;
+}
+
+void delete() {
+    if (front > rear)
+        printf("Queue Underflow!\n");
+    else
+        printf("Deleted: %d\n", q[front++]);
+
+    if (front > rear)
+        front = 0, rear = -1;
+}
+
+void display() {
+    int i;
+    if (rear == -1) {
+        printf("Queue is empty\n");
+        return;
+    }
+
+    for (i = front; i <= rear; i++)
+        printf("%d ", q[i]);
+    printf("\n");
+}
+
+int main() {
+    insert(10);
+    insert(20);
+    insert(30);
+    display();
+    delete();
+    display();
+    return 0;
+}
+
+Output
+10 20 30
+Deleted: 10
+20 30
+
+Q3. Write a program to implement Circular Queue using an array, showing insertion and deletion operations.
+Answer
+#include <stdio.h>
+#define MAX 5
+
+int q[MAX], front = -1, rear = -1;
+
+void insert(int x) {
+    if ((rear + 1) % MAX == front) {
+        printf("Queue Overflow!\n");
+        return;
+    }
+
+    if (front == -1)
+        front = 0;
+
+    rear = (rear + 1) % MAX;
+    q[rear] = x;
+    printf("%d inserted\n", x);
+}
+
+void delete() {
+    if (front == -1) {
+        printf("Queue Underflow!\n");
+        return;
+    }
+
+    printf("Deleted: %d\n", q[front]);
+
+    if (front == rear)
+        front = rear = -1;
+    else
+        front = (front + 1) % MAX;
+}
+
+void display() {
+    int i;
+
+    if (front == -1) {
+        printf("Queue is empty\n");
+        return;
+    }
+
+    i = front;
+    while (1) {
+        printf("%d ", q[i]);
+        if (i == rear)
+            break;
+        i = (i + 1) % MAX;
+    }
+    printf("\n");
+}
+
+int main() {
+    insert(10);
+    insert(20);
+    insert(30);
+    display();
+    delete();
+    insert(40);
+    display();
+    return 0;
+}
+
+Output
+10 inserted
+20 inserted
+30 inserted
+10 20 30
+Deleted: 10
+40 inserted
+20 30 40
+
+WEEK 5: LINKED LIST
+Q1. Write a program to implement a Linear Linked List, showing creation, display, insertion, deletion, and searching operations.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+void insert(int x, int pos) {
+    struct Node *n = malloc(sizeof(struct Node));
+    struct Node *t = head;
+    int i;
+
+    if (n == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    n->data = x;
+
+    if (pos == 1) {
+        n->next = head;
+        head = n;
+        return;
+    }
+
+    for (i = 1; t && i < pos - 1; i++)
+        t = t->next;
+
+    if (t == NULL) {
+        printf("Invalid position\n");
+        free(n);
+        return;
+    }
+
+    n->next = t->next;
+    t->next = n;
+}
+
+void deleteNode(int pos) {
+    struct Node *t = head, *d;
+    int i;
+
+    if (pos < 1 || head == NULL) {
+        printf("Invalid deletion\n");
+        return;
+    }
+
+    if (pos == 1) {
+        head = head->next;
+        free(t);
+        return;
+    }
+
+    for (i = 1; t && i < pos - 1; i++)
+        t = t->next;
+
+    if (t == NULL || t->next == NULL) {
+        printf("Invalid position\n");
+        return;
+    }
+
+    d = t->next;
+    t->next = d->next;
+    free(d);
+}
+
+void display() {
+    struct Node *t = head;
+
+    while (t) {
+        printf("%d -> ", t->data);
+        t = t->next;
+    }
+    printf("NULL\n");
+}
+
+void search(int x) {
+    struct Node *t = head;
+    int pos = 1;
+
+    while (t) {
+        if (t->data == x) {
+            printf("Found at position %d\n", pos);
+            return;
+        }
+        t = t->next;
+        pos++;
+    }
+    printf("Element not found\n");
+}
+
+int main() {
+    insert(10, 1);
+    insert(20, 2);
+    insert(30, 3);
+
+    printf("Original list: ");
+    display();
+
+    insert(15, 2);
+    printf("After insertion: ");
+    display();
+
+    deleteNode(3);
+    printf("After deletion: ");
+    display();
+
+    search(30);
+    return 0;
+}
+
+Output
+Original list: 10 -> 20 -> 30 -> NULL
+After insertion: 10 -> 15 -> 20 -> 30 -> NULL
+After deletion: 10 -> 15 -> 30 -> NULL
+Found at position 3
+
+Q2. Write a program to implement Stack using a Linked List, with Push, Pop, and Display operations.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *top = NULL;
+
+void push(int x) {
+    struct Node *n = malloc(sizeof(struct Node));
+
+    if (n == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    n->data = x;
+    n->next = top;
+    top = n;
+
+    printf("%d pushed\n", x);
+}
+
+void pop() {
+    struct Node *t;
+
+    if (top == NULL) {
+        printf("Stack Underflow!\n");
+        return;
+    }
+
+    t = top;
+    printf("Popped: %d\n", top->data);
+    top = top->next;
+    free(t);
+}
+
+void display() {
+    struct Node *t = top;
+
+    while (t) {
+        printf("%d ", t->data);
+        t = t->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    push(10);
+    push(20);
+    push(30);
+    display();
+    pop();
+    display();
+    return 0;
+}
+
+Output
+10 pushed
+20 pushed
+30 pushed
+30 20 10
+Popped: 30
+20 10
+
+Q3. Write a program to implement Queue using a Linked List, with insertion, deletion, and display operations.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *front = NULL, *rear = NULL;
+
+void insert(int x) {
+    struct Node *n = malloc(sizeof(struct Node));
+
+    if (n == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    n->data = x;
+    n->next = NULL;
+
+    if (rear == NULL)
+        front = rear = n;
+    else {
+        rear->next = n;
+        rear = n;
+    }
+
+    printf("%d inserted\n", x);
+}
+
+void delete() {
+    struct Node *t;
+
+    if (front == NULL) {
+        printf("Queue Underflow!\n");
+        return;
+    }
+
+    t = front;
+    printf("Deleted: %d\n", t->data);
+    front = front->next;
+
+    if (front == NULL)
+        rear = NULL;
+
+    free(t);
+}
+
+void display() {
+    struct Node *t = front;
+
+    while (t) {
+        printf("%d ", t->data);
+        t = t->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    insert(10);
+    insert(20);
+    insert(30);
+    display();
+    delete();
+    display();
+    return 0;
+}
+
+Output
+10 inserted
+20 inserted
+30 inserted
+10 20 30
+Deleted: 10
+20 30
+
+WEEK 6: LINKED LIST
+Q1. Write a program to display the reverse of a linked list.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+void insert(int x) {
+    struct Node *n = malloc(sizeof(struct Node));
+    struct Node *t;
+
+    if (n == NULL)
+        return;
+
+    n->data = x;
+    n->next = NULL;
+
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+
+    t = head;
+    while (t->next)
+        t = t->next;
+
+    t->next = n;
+}
+
+void reverse() {
+    struct Node *prev = NULL, *cur = head, *next;
+
+    while (cur) {
+        next = cur->next;
+        cur->next = prev;
+        prev = cur;
+        cur = next;
+    }
+
+    head = prev;
+}
+
+void display() {
+    struct Node *t = head;
+
+    while (t) {
+        printf("%d -> ", t->data);
+        t = t->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    insert(10);
+    insert(20);
+    insert(30);
+    insert(40);
+
+    printf("Original list: ");
+    display();
+
+    reverse();
+
+    printf("Reversed list: ");
+    display();
+
+    return 0;
+}
+
+Output
+Original list: 10 -> 20 -> 30 -> 40 -> NULL
+Reversed list: 40 -> 30 -> 20 -> 10 -> NULL
+
+Q2. Write a program to increment the data part of every node in a linked list by 10. Display the data before and after incrementing.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+void insert(int x) {
+    struct Node *n = malloc(sizeof(struct Node));
+    struct Node *t;
+
+    if (n == NULL)
+        return;
+
+    n->data = x;
+    n->next = NULL;
+
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+
+    t = head;
+    while (t->next)
+        t = t->next;
+
+    t->next = n;
+}
+
+void display() {
+    struct Node *t = head;
+
+    while (t) {
+        printf("%d ", t->data);
+        t = t->next;
+    }
+    printf("\n");
+}
+
+void increment() {
+    struct Node *t = head;
+
+    while (t) {
+        t->data += 10;
+        t = t->next;
+    }
+}
+
+int main() {
+    insert(10);
+    insert(20);
+    insert(30);
+    insert(40);
+
+    printf("Before incrementing: ");
+    display();
+
+    increment();
+
+    printf("After incrementing: ");
+    display();
+
+    return 0;
+}
+
+Output
+Before incrementing: 10 20 30 40
+After incrementing: 20 30 40 50
+
+Q3. Write a program to implement a Doubly Linked List, showing creation, display, insertion, deletion, and searching operations.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev, *next;
+};
+
+struct Node *head = NULL;
+
+void insert(int x, int pos) {
+    struct Node *n, *t;
+    int i;
+
+    if (pos < 1) {
+        printf("Invalid position\n");
+        return;
+    }
+
+    n = malloc(sizeof(struct Node));
+
+    if (n == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    n->data = x;
+    n->prev = n->next = NULL;
+
+    if (pos == 1) {
+        n->next = head;
+
+        if (head)
+            head->prev = n;
+
+        head = n;
+        return;
+    }
+
+    t = head;
+
+    for (i = 1; t && i < pos - 1; i++)
+        t = t->next;
+
+    if (t == NULL) {
+        printf("Invalid position\n");
+        free(n);
+        return;
+    }
+
+    n->next = t->next;
+    n->prev = t;
+
+    if (t->next)
+        t->next->prev = n;
+
+    t->next = n;
+}
+
+void deleteNode(int pos) {
+    struct Node *t = head;
+    int i;
+
+    if (pos < 1 || head == NULL) {
+        printf("Invalid deletion\n");
+        return;
+    }
+
+    for (i = 1; t && i < pos; i++)
+        t = t->next;
+
+    if (t == NULL) {
+        printf("Invalid position\n");
+        return;
+    }
+
+    if (t->prev)
+        t->prev->next = t->next;
+    else
+        head = t->next;
+
+    if (t->next)
+        t->next->prev = t->prev;
+
+    free(t);
+}
+
+void display() {
+    struct Node *t = head;
+
+    while (t) {
+        printf("%d <-> ", t->data);
+        t = t->next;
+    }
+    printf("NULL\n");
+}
+
+void search(int x) {
+    struct Node *t = head;
+    int pos = 1;
+
+    while (t) {
+        if (t->data == x) {
+            printf("Found at position %d\n", pos);
+            return;
+        }
+
+        t = t->next;
+        pos++;
+    }
+
+    printf("Element not found\n");
+}
+
+int main() {
+    insert(10, 1);
+    insert(20, 2);
+    insert(30, 3);
+
+    printf("Original list: ");
+    display();
+
+    insert(15, 2);
+    printf("After insertion: ");
+    display();
+
+    deleteNode(3);
+    printf("After deletion: ");
+    display();
+
+    search(30);
+
+    return 0;
+}
+
+Output
+Original list: 10 <-> 20 <-> 30 <-> NULL
+After insertion: 10 <-> 15 <-> 20 <-> 30 <-> NULL
+After deletion: 10 <-> 15 <-> 30 <-> NULL
+Found at position 3
+
+WEEK 7: TREES
+Q1. Write a program to create a Binary Search Tree (BST) and display its contents using recursive preorder, postorder, and inorder traversal.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node *insert(struct Node *root, int x) {
+    if (root == NULL) {
+        struct Node *n = malloc(sizeof(struct Node));
+
+        if (n == NULL)
+            return NULL;
+
+        n->data = x;
+        n->left = n->right = NULL;
+
+        return n;
+    }
+
+    if (x < root->data)
+        root->left = insert(root->left, x);
+    else if (x > root->data)
+        root->right = insert(root->right, x);
+
+    return root;
+}
+
+void preorder(struct Node *r) {
+    if (r) {
+        printf("%d ", r->data);
+        preorder(r->left);
+        preorder(r->right);
+    }
+}
+
+void inorder(struct Node *r) {
+    if (r) {
+        inorder(r->left);
+        printf("%d ", r->data);
+        inorder(r->right);
+    }
+}
+
+void postorder(struct Node *r) {
+    if (r) {
+        postorder(r->left);
+        postorder(r->right);
+        printf("%d ", r->data);
+    }
+}
+
+int main() {
+    struct Node *root = NULL;
+    int n, x, i;
+
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++) {
+        scanf("%d", &x);
+        root = insert(root, x);
+    }
+
+    printf("Preorder: ");
+    preorder(root);
+
+    printf("\nInorder: ");
+    inorder(root);
+
+    printf("\nPostorder: ");
+    postorder(root);
+
+    printf("\n");
+    return 0;
+}
+
+Output
+Enter number of nodes: 5
+50 30 70 20 40
+Preorder: 50 30 20 40 70
+Inorder: 20 30 40 50 70
+Postorder: 20 40 30 70 50
+
+Q2. Write a program to delete a node from a Binary Search Tree (BST).
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node *insert(struct Node *r, int x) {
+    if (r == NULL) {
+        struct Node *n = malloc(sizeof(struct Node));
+
+        if (n == NULL)
+            return NULL;
+
+        n->data = x;
+        n->left = n->right = NULL;
+
+        return n;
+    }
+
+    if (x < r->data)
+        r->left = insert(r->left, x);
+    else if (x > r->data)
+        r->right = insert(r->right, x);
+
+    return r;
+}
+
+struct Node *minimum(struct Node *r) {
+    while (r && r->left)
+        r = r->left;
+
+    return r;
+}
+
+struct Node *deleteNode(struct Node *r, int x) {
+    struct Node *t;
+
+    if (r == NULL)
+        return NULL;
+
+    if (x < r->data)
+        r->left = deleteNode(r->left, x);
+    else if (x > r->data)
+        r->right = deleteNode(r->right, x);
+    else {
+        if (r->left == NULL) {
+            t = r->right;
+            free(r);
+            return t;
+        }
+
+        if (r->right == NULL) {
+            t = r->left;
+            free(r);
+            return t;
+        }
+
+        t = minimum(r->right);
+        r->data = t->data;
+        r->right = deleteNode(r->right, t->data);
+    }
+
+    return r;
+}
+
+void inorder(struct Node *r) {
+    if (r) {
+        inorder(r->left);
+        printf("%d ", r->data);
+        inorder(r->right);
+    }
+}
+
+int main() {
+    struct Node *root = NULL;
+    int n, x, key, i;
+
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++) {
+        scanf("%d", &x);
+        root = insert(root, x);
+    }
+
+    printf("Enter value to delete: ");
+    scanf("%d", &key);
+
+    root = deleteNode(root, key);
+
+    printf("BST after deletion: ");
+    inorder(root);
+
+    return 0;
+}
+
+Output
+Enter number of nodes: 5
+50 30 70 20 40
+Enter value to delete: 30
+BST after deletion: 20 40 50 70
+
+Q3. Write a program to search for an item in a BST.
+Answer
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node *insert(struct Node *r, int x) {
+    if (r == NULL) {
+        struct Node *n = malloc(sizeof(struct Node));
+
+        if (n == NULL)
+            return NULL;
+
+        n->data = x;
+        n->left = n->right = NULL;
+
+        return n;
+    }
+
+    if (x < r->data)
+        r->left = insert(r->left, x);
+    else if (x > r->data)
+        r->right = insert(r->right, x);
+
+    return r;
+}
+
+int search(struct Node *r, int x) {
+    if (r == NULL)
+        return 0;
+
+    if (r->data == x)
+        return 1;
+
+    if (x < r->data)
+        return search(r->left, x);
+
+    return search(r->right, x);
+}
+
+int main() {
+    struct Node *root = NULL;
+    int n, x, key, i;
+
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++) {
+        scanf("%d", &x);
+        root = insert(root, x);
+    }
+
+    printf("Enter element to search: ");
+    scanf("%d", &key);
+
+    if (search(root, key))
+        printf("Element found\n");
+    else
+        printf("Element not found\n");
+
+    return 0;
+}
+
+Output
+Enter number of nodes: 5
+50 30 70 20 40
+Enter element to search: 40
+Element found
+
+WEEK 8: SEARCHING & SORTING
+Q1. Write a program to sort a given array using Bubble Sort.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[100], n, i, j, temp;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    for (i = 0; i < n - 1; i++)
+        for (j = 0; j < n - i - 1; j++)
+            if (a[j] > a[j + 1]) {
+                temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+            }
+
+    printf("Sorted array: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Output
+Enter array size: 5
+Enter elements: 5 3 8 1 2
+Sorted array: 1 2 3 5 8
+
+Q2. Write a program to sort a given array using Insertion Sort.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[100], n, i, j, key;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    for (i = 1; i < n; i++) {
+        key = a[i];
+        j = i - 1;
+
+        while (j >= 0 && a[j] > key) {
+            a[j + 1] = a[j];
+            j--;
+        }
+
+        a[j + 1] = key;
+    }
+
+    printf("Sorted array: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Output
+Enter array size: 5
+Enter elements: 9 4 6 2 1
+Sorted array: 1 2 4 6 9
+
+Q3. Write a program to search for an element using Linear Search.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[100], n, key, i;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter element to search: ");
+    scanf("%d", &key);
+
+    for (i = 0; i < n; i++) {
+        if (a[i] == key) {
+            printf("Element found at position %d\n", i + 1);
+            return 0;
+        }
+    }
+
+    printf("Element not found\n");
+    return 0;
+}
+
+Output
+Enter array size: 5
+Enter elements: 10 20 30 40 50
+Enter element to search: 30
+Element found at position 3
+
+WEEK 9: SEARCHING & SORTING
+Q1. Write a program to search for an element using Binary Search.
+Answer
+#include <stdio.h>
+
+int main() {
+    int a[100], n, key, low, high, mid, i;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter sorted elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    printf("Enter element to search: ");
+    scanf("%d", &key);
+
+    low = 0;
+    high = n - 1;
+
+    while (low <= high) {
+        mid = low + (high - low) / 2;
+
+        if (a[mid] == key) {
+            printf("Element found at position %d\n", mid + 1);
+            return 0;
+        }
+
+        if (a[mid] < key)
+            low = mid + 1;
+        else
+            high = mid - 1;
+    }
+
+    printf("Element not found\n");
+    return 0;
+}
+
+Output
+Enter array size: 5
+Enter sorted elements: 10 20 30 40 50
+Enter element to search: 40
+Element found at position 4
+
+Q2. Write a program to sort a given array using Quick Sort.
+Answer
+#include <stdio.h>
+
+void quickSort(int a[], int low, int high) {
+    int i, j, pivot, temp;
+
+    if (low >= high)
+        return;
+
+    pivot = a[low];
+    i = low + 1;
+    j = high;
+
+    while (i <= j) {
+        while (i <= high && a[i] <= pivot)
+            i++;
+
+        while (j > low && a[j] > pivot)
+            j--;
+
+        if (i < j) {
+            temp = a[i];
+            a[i] = a[j];
+            a[j] = temp;
+        }
+    }
+
+    a[low] = a[j];
+    a[j] = pivot;
+
+    quickSort(a, low, j - 1);
+    quickSort(a, j + 1, high);
+}
+
+int main() {
+    int a[100], n, i;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    quickSort(a, 0, n - 1);
+
+    printf("Sorted array: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Output
+Enter array size: 5
+Enter elements: 8 4 7 2 1
+Sorted array: 1 2 4 7 8
+
+Q3. Write a program to sort a given array using Merge Sort.
+Answer
+#include <stdio.h>
+
+int temp[100];
+
+void merge(int a[], int low, int mid, int high) {
+    int i = low, j = mid + 1, k = low;
+
+    while (i <= mid && j <= high) {
+        if (a[i] <= a[j])
+            temp[k++] = a[i++];
+        else
+            temp[k++] = a[j++];
+    }
+
+    while (i <= mid)
+        temp[k++] = a[i++];
+
+    while (j <= high)
+        temp[k++] = a[j++];
+
+    for (i = low; i <= high; i++)
+        a[i] = temp[i];
+}
+
+void mergeSort(int a[], int low, int high) {
+    int mid;
+
+    if (low < high) {
+        mid = low + (high - low) / 2;
+
+        mergeSort(a, low, mid);
+        mergeSort(a, mid + 1, high);
+
+        merge(a, low, mid, high);
+    }
+}
+
+int main() {
+    int a[100], n, i;
+
+    printf("Enter array size: ");
+    scanf("%d", &n);
+
+    printf("Enter elements: ");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    mergeSort(a, 0, n - 1);
+
+    printf("Sorted array: ");
+    for (i = 0; i < n; i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
+
+Output
+Enter array size: 5
+Enter elements: 9 3 7 1 5
+Sorted array: 1 3 5 7 9
+
+WEEK 10: GRAPH
+Q1. Write a program to implement Depth First Search (DFS) on a graph.
+Answer
+#include <stdio.h>
+
+int graph[20][20], visited[20], n;
+
+void DFS(int v) {
+    int i;
+
+    visited[v] = 1;
+    printf("%d ", v);
+
+    for (i = 0; i < n; i++) {
+        if (graph[v][i] == 1 && !visited[i])
+            DFS(i);
+    }
+}
+
+int main() {
+    int i, j, start;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > 20) {
+        printf("Invalid number of vertices");
+        return 0;
+    }
+
+    printf("Enter adjacency matrix:\n");
+
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &graph[i][j]);
+
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
+
+    if (start < 0 || start >= n) {
+        printf("Invalid starting vertex");
+        return 0;
+    }
+
+    printf("DFS Traversal: ");
+    DFS(start);
+
+    return 0;
+}
+
+Output
+Enter number of vertices: 4
+Enter adjacency matrix:
+0 1 1 0
+1 0 0 1
+1 0 0 1
+0 1 1 0
+Enter starting vertex: 0
+DFS Traversal: 0 1 3 2
+
+Q2. Write a program to implement Breadth First Search (BFS) on a graph.
+Answer
+#include <stdio.h>
+
+int graph[20][20], visited[20], queue[20], n;
+
+void BFS(int start) {
+    int front = 0, rear = 0;
+    int v, i;
+
+    visited[start] = 1;
+    queue[rear++] = start;
+
+    while (front < rear) {
+        v = queue[front++];
+        printf("%d ", v);
+
+        for (i = 0; i < n; i++) {
+            if (graph[v][i] == 1 && !visited[i]) {
+                visited[i] = 1;
+                queue[rear++] = i;
+            }
+        }
+    }
+}
+
+int main() {
+    int i, j, start;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > 20) {
+        printf("Invalid number of vertices");
+        return 0;
+    }
+
+    printf("Enter adjacency matrix:\n");
+
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &graph[i][j]);
+
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
+
+    if (start < 0 || start >= n) {
+        printf("Invalid starting vertex");
+        return 0;
+    }
+
+    printf("BFS Traversal: ");
+    BFS(start);
+
+    return 0;
+}
+
+Output
+Enter number of vertices: 4
+Enter adjacency matrix:
+0 1 1 0
+1 0 0 1
+1 0 0 1
+0 1 1 0
+Enter starting vertex: 0
+BFS Traversal: 0 1 2 3
+
+Q3. Write a program to implement Prim's algorithm for a Minimum Spanning Tree (MST).
+Answer
+#include <stdio.h>
+
+#define MAX 20
+#define INF 999999
+
+int main() {
+    int graph[MAX][MAX], selected[MAX] = {0};
+    int n, i, j, min, x, y;
+    int edges = 0, cost = 0;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    if (n < 1 || n > MAX) {
+        printf("Invalid number of vertices");
+        return 0;
+    }
+
+    printf("Enter weighted adjacency matrix:\n");
+
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            scanf("%d", &graph[i][j]);
+
+    selected[0] = 1;
+
+    printf("Edges in MST:\n");
+
+    while (edges < n - 1) {
+        min = INF;
+        x = -1;
+        y = -1;
+
+        for (i = 0; i < n; i++) {
+            if (selected[i]) {
+                for (j = 0; j < n; j++) {
+                    if (!selected[j] &&
+                        graph[i][j] != 0 &&
+                        graph[i][j] < min) {
+                        min = graph[i][j];
+                        x = i;
+                        y = j;
+                    }
+                }
+            }
+        }
+
+        if (x == -1) {
+            printf("Graph is disconnected; MST does not exist.\n");
+            return 0;
+        }
+
+        printf("%d - %d : Weight %d\n", x, y, min);
+
+        cost += min;
+        selected[y] = 1;
+        edges++;
+    }
+
+    printf("Total cost of MST = %d\n", cost);
+
+    return 0;
+}
+
+Output
+Enter number of vertices: 4
+Enter weighted adjacency matrix:
+0 10 6 5
+10 0 0 15
+6 0 0 4
+5 15 4 0
+Edges in MST:
+0 - 3 : Weight 5
+3 - 2 : Weight 4
+0 - 1 : Weight 10
+Total cost of MST = 19
